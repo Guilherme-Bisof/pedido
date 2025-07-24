@@ -247,11 +247,15 @@ button:active::before {
 
 /* Classes específicas para cada tema */
 .hello-kitty-decoration {
-    background-image: url('./img/hello_kitty.png'); /* Substitua pelo caminho da sua imagem */
+    background-image: url('./img/hello_kitty.png');
 }
 
 .supernatural-decoration {
-    background-image: url('./img/sam_dean.png'); /* Substitua pelo caminho da sua imagem */
+    background-image: url('./img/sam_dean.png');
+}
+
+.harry-potter-decoration {
+    background-image: url('./img/harry_potter.png');
 }
 
 @keyframes float {
@@ -384,6 +388,78 @@ button:active::before {
     color: #f1f1f1;
 }
 
+/* Tema Harry Potter */
+.tema-harry-potter {
+    background: linear-gradient(135deg, #1a0d2e 0%, #16213e 50%, #0f3460 100%);
+    color: #f0e6d2;
+    cursor: url('./img/varinha_cursor.png') 16 16, auto;
+    position: relative;
+}
+
+/* Efeito de estrelas cintilantes */
+.tema-harry-potter::before {
+    content: '';
+    position: fixed;
+    top: 0; 
+    left: 0;
+    width: 100%; 
+    height: 100%;
+    background-image: 
+        radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+        radial-gradient(2px 2px at 40px 70px, #fff, transparent),
+        radial-gradient(1px 1px at 90px 40px, #fff, transparent);
+    background-repeat: repeat;
+    background-size: 200px 100px;
+    animation: sparkle 20s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes sparkle {
+    from { transform: translateX(0); }
+    to { transform: translateX(-200px); }
+}
+
+.tema-harry-potter .container {
+    background: linear-gradient(145deg, #2d1b47, #1e1a3a);
+    border: 2px solid #d4af37;
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+}
+
+.tema-harry-potter button {
+    background: linear-gradient(45deg, #8b0000, #b22222);
+    color: #f0e6d2;
+    border: 1px solid #d4af37;
+}
+
+.tema-harry-potter button:hover {
+    background: linear-gradient(45deg, #a00000, #c44242);
+    box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+}
+
+.tema-harry-potter #toggle-theme,
+.tema-harry-potter .photo-btn {
+    background: linear-gradient(45deg, #8b0000, #b22222);
+    color: #f0e6d2;
+    border: 1px solid #d4af37;
+}
+
+.tema-harry-potter #toggle-theme:hover,
+.tema-harry-potter .photo-btn:hover {
+    background: linear-gradient(45deg, #a00000, #c44242);
+}
+
+.tema-harry-potter .days-counter {
+    background: linear-gradient(45deg, #8b0000, #b22222);
+    border: 1px solid #d4af37;
+}
+
+.tema-harry-potter .volume-control {
+    background: rgba(45, 27, 71, 0.9);
+    color: #f0e6d2;
+    border: 1px solid #d4af37;
+}
+
 /* Feedback visual para respostas */
 .correct-answer {
     animation: correctPulse 0.6s ease;
@@ -397,6 +473,12 @@ button:active::before {
     0% { background-color: #ff80ab; transform: scale(1); }
     50% { background-color: #4caf50; transform: scale(1.05); }
     100% { background-color: #ff80ab; transform: scale(1); }
+}
+
+@keyframes wrongShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
 }
 
 /* Sparkles seguindo o mouse (tema Hello Kitty) */
@@ -458,62 +540,62 @@ button:active::before {
 /* Estilos gerais para dispositivos móveis */
 @media (max-width: 600px) {
     body {
-        font-size: 14px; /* Tamanho de fonte menor em telas pequenas */
+        font-size: 14px;
     }
 
     .main-container {
-        width: 95%; /* Aumenta a largura em dispositivos móveis */
-        margin: 10px; /* Reduz a margem */
+        width: 95%;
+        margin: 10px;
     }
 
     .top-controls {
-        flex-direction: column; /* Coloca os controles em coluna */
-        align-items: flex-start; /* Alinha à esquerda */
+        flex-direction: column;
+        align-items: flex-start;
     }
 
     #toggle-theme {
-        width: 100%; /* Botão ocupa toda a largura */
-        margin-bottom: 10px; /* Espaço entre os botões */
+        width: 100%;
+        margin-bottom: 10px;
     }
 
     .volume-control {
-        width: 100%; /* Controle de volume ocupa toda a largura */
-        justify-content: space-between; /* Espaço entre ícone e slider */
+        width: 100%;
+        justify-content: space-between;
     }
 
     .days-counter {
-        font-size: 16px; /* Tamanho de fonte menor para o contador */
+        font-size: 16px;
     }
 
     .photo-slider img {
-        height: 150px; /* Ajusta a altura das imagens na galeria */
+        height: 150px;
     }
 
     .photo-gallery {
-        margin: 10px 0; /* Reduz a margem da galeria */
+        margin: 10px 0;
     }
 
     button {
-        font-size: 14px; /* Tamanho de fonte menor para botões */
-        padding: 10px; /* Ajusta o padding dos botões */
+        font-size: 14px;
+        padding: 10px;
     }
 
     h1, h2, p {
-        font-size: 16px; /* Tamanho de fonte menor para títulos e parágrafos */
+        font-size: 16px;
     }
 }
 
 /* Estilos para tablets */
 @media (min-width: 601px) and (max-width: 900px) {
     body {
-        font-size: 16px; /* Tamanho de fonte padrão para tablets */
+        font-size: 16px;
     }
 
     .main-container {
-        width: 90%; /* Largura um pouco menor em tablets */
+        width: 90%;
     }
 
     button {
-        font-size: 16px; /* Tamanho de fonte padrão para botões */
+        font-size: 16px;
     }
 }
