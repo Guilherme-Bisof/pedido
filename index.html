@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dois Mundos, Um Amor</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+    <!-- Partículas flutuantes -->
+    <div class="particles" id="particles"></div>
+    
+
+    <div class="main-container">
+        <!-- Controles superiores -->
+        <div class="top-controls">
+            <button id="toggle-theme">🎭 Trocar Tema</button>
+            <div class="volume-control">
+                <span>🔊</span>
+                <input type="range" id="volume-slider" min="0" max="100" value="20">
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- Contador de dias juntos -->
+            <div class="days-counter">
+                <h3>💕 Dias Juntos 💕</h3>
+                <div class="days-number" id="days-count">0</div>
+            </div>
+
+            <!-- Galeria de fotos -->
+            <div class="photo-gallery" id="photo-gallery">
+                <h3>📸 Nossas Memórias 📸</h3>
+                <div class="photo-slider">
+                    <!-- Placeholder para fotos - substitua pelos caminhos das suas fotos -->
+                    <img src="./fotos/foto1.jpg" alt="Nossa primeira foto" class="active">
+                    <img src="./fotos/foto2.jpg" alt="No cinema">
+                    <img src="./fotos/foto3.jpg" alt="Nosso momento especial">
+                    <img src="./fotos/foto4.jpg" alt="Juntos sempre">
+                </div>
+                <div class="photo-controls">
+                    <button class="photo-btn" onclick="prevPhoto()">⬅️ Anterior</button>
+                    <button class="photo-btn" onclick="toggleGallery()">❌ Fechar</button>
+                    <button class="photo-btn" onclick="nextPhoto()">Próxima ➡️</button>
+                </div>
+            </div>
+
+            <div id="game-box"></div>
+        </div>
+    </div>
+
+    <!-- Áudios (incluindo novos efeitos) -->
+    <audio id="correct-sound">
+        <source src="./sounds/acerto.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="wrong-sound">
+        <source src="./sounds/erro.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="hello-kitty-sound">
+        <source src="./sounds/hello_kitty.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="supernatural-sound">
+        <source src="./sounds/supernatural.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Novos áudios -->
+    <audio id="heartbeat-sound">
+        <source src="./sounds/heartbeat.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="echo-sound">
+        <source src="./sounds/echo.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Imagens decorativas (agora vazias, serão preenchidas via CSS) -->
+    <div class="hello-img top-left" id="decoration-left"></div>
+    <div class="hello-img bottom-right" id="decoration-right"></div>
+
+    <!-- Confete JS -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
