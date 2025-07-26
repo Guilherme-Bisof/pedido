@@ -2,12 +2,16 @@ const gameBox = document.getElementById("game-box");
 let currentStep = 0;
 let score = 0;
 let currentPhotoIndex = 0;
-let currentTheme = 0; // 0: Hello Kitty, 1: Supernatural, 2: Harry Potter
+let currentTheme = 0;
+
+// Armazenamento completo das respostas
+let userResponses = [];
+let totalQuestions = 0;
 
 // Data de quando começaram (ALTERE AQUI!)
 const startDate = new Date('2025-05-15'); // Formato: YYYY-MM-DD
 
-// Áudios (incluindo novos efeitos)
+// Áudios
 const correctSound = document.getElementById('correct-sound');
 const wrongSound = document.getElementById('wrong-sound');
 const helloKittySound = document.getElementById('hello-kitty-sound');
@@ -17,31 +21,132 @@ const heartbeatSound = document.getElementById('heartbeat-sound');
 const echoSound = document.getElementById('echo-sound');
 const magicSound = document.getElementById('magic-sound');
 
+// PERGUNTAS EXPANDIDAS - Mais múltipla escolha e texto
 const questions = [
     {
         question: "Qual foi o primeiro lugar onde saímos juntos?",
-        options: ["Lanchonete","Pizzaria 🍕", "Cafeteria", "Cinema", "Praça"],
-        correct: 3 
+        options: ["Lanchonete", "Pizzaria 🍕", "Cafeteria", "Cinema", "Praça"],
+        correct: 3,
+        type: "multiple"
+    },
+    {
+        question: "Escreva uma palavra que descreve como você se sente quando está comigo:",
+        type: "text",
+        placeholder: "Digite aqui como você se sente..."
     },
     {
         question: "O que ele mais gosta em você?",
         options: ["Seu jeito", "Seu sorriso", "Seu humor", "Tudo"],
-        correct: 3
+        correct: 3,
+        type: "multiple"
     },
     {
-        question: "Se ele fosse um personagem da Hello Kitty, qual seria?",
-        options: ["Pompompurin", "Keroppi 🐸", "Dear Daniel 💌"],
-        correct: 2
+        question: "Complete a frase: 'Você é...'",
+        type: "text",
+        placeholder: "Você é..."
+    },
+    {
+        question: "Qual sua comida favorita que vocês já comeram juntos?",
+        options: ["Pizza", "Hambúrguer", "Açaí", "Pipoca do cinema"],
+        correct: 1,
+        type: "multiple"
+    },
+    {
+        question: "Escreva o que você mais ama nele:",
+        type: "text",
+        placeholder: "O que você mais ama nele..."
+    },
+    {
+        question: "O que ele faria por você sem pensar duas vezes?",
+        options: ["Te dar um presente", "Viajar quilômetros só pra te ver", "Ficar até tarde ouvindo você", "Todas as anteriores"],
+        correct: 3,
+        type: "multiple"
+    },
+    {
+        question: "Descreva o primeiro beijo de vocês em uma palavra:",
+        type: "text",
+        placeholder: "Uma palavra sobre o primeiro beijo..."
+    },
+    {
+        question: "Qual apelido carinhoso ele mais usa com você?",
+        options: ["Amor", "Vida", "Linda", "Minha Gata"],
+        correct: 3,
+        type: "multiple"
+    },
+    {
+        question: "Se vocês fossem viajar juntos, para onde iriam?",
+        type: "text",
+        placeholder: "Qual lugar?..."
+    },
+    {
+        question: "Escreva uma mensagem fofa para ele:",
+        type: "text",
+        placeholder: "Sua mensagem especial aqui..."
+    },
+    {
+        question: "Qual filme vocês mais gostaram de assistir juntos?",
+        options: ["Romance", "Terror", "Comédia", "Ação"],
+        correct: 2,
+        type: "multiple"
+    },
+    {
+        question: "Conte o que mais te faz sorrir nele:",
+        type: "text",
+        placeholder: "O que te faz sorrir nele..."
+    },
+    {
+        question: "Se ele fosse um personagem da Marvel, qual seria?",
+        options: ["Homem de Ferro 🤖", "Homem-Aranha 🕸️", "Capitão América 🇺🇸", "Thor 🔨"],
+        correct: 1,
+        type: "multiple"
+    },
+    {
+        question: "Escreva como você imagina o futuro de vocês:",
+        type: "text",
+        placeholder: "Como você imagina nosso futuro..."
+    },
+    {
+        question: "Qual a coisa mais romântica que ele já fez por você?",
+        options: ["Me surpreendeu", "Lembrou de algo importante", "Foi carinhoso quando eu precisava", "Todas as anteriores"],
+        correct: 3,
+        type: "multiple"
+    },
+    {
+        question: "Se você pudesse dizer algo para ele agora, o que seria?",
+        type: "text",
+        placeholder: "O que você diria para ele agora..."
     },
     {
         question: "Se ele fosse um personagem de Supernatural, qual seria?",
-        options: ["Sam", "Dean", "Castiel"],
-        correct: 0
+        options: ["Sam Winchester", "Dean Winchester", "Castiel"],
+        correct: 0,
+        type: "multiple"
+    },
+    {
+        question: "Descreva em uma frase por que você gosta dele:",
+        type: "text",
+        placeholder: "Por que você gosta dele..."
     },
     {
         question: "Se ele fosse um personagem de Harry Potter, qual seria?",
         options: ["Harry Potter ⚡", "Rony Weasley", "Hermione Granger", "Neville Longbottom"],
-        correct: 0
+        correct: 0,
+        type: "multiple"
+    },
+    {
+        question: "Escreva a coisa mais engraçada que ele já fez:",
+        type: "text",
+        placeholder: "A coisa mais engraçada que ele fez..."
+    },
+    {
+        question: "Qual seria o encontro perfeito para vocês?",
+        type: "text",
+        placeholder: "Escreva..."
+    },
+    {
+        question: "Complete: ' porque...'",
+        type: "text",
+        placeholder: "Amo você porque..."
     }
 ];
 
@@ -56,7 +161,7 @@ function updateDaysCounter() {
     }
 }
 
-// Controle de volume (incluindo novos sons)
+// Controle de volume
 function setupVolumeControl() {
     const volumeSlider = document.getElementById('volume-slider');
     if (!volumeSlider) return;
@@ -64,24 +169,23 @@ function setupVolumeControl() {
     volumeSlider.addEventListener('input', (e) => {
         const volume = e.target.value / 100;
         
-        // Aplica o volume a todos os sons
         if (correctSound) correctSound.volume = volume;
         if (wrongSound) wrongSound.volume = volume;
         if (helloKittySound) helloKittySound.volume = volume;
         if (supernaturalSound) supernaturalSound.volume = volume;
-        if (harryPotterSound) harryPotterSound.volume = volume * 2.5; // Volume mais alto para Harry Potter
+        if (harryPotterSound) harryPotterSound.volume = volume * 2.5;
         if (heartbeatSound) heartbeatSound.volume = volume * 0.5;
         if (echoSound) echoSound.volume = volume * 0.7;
         if (magicSound) magicSound.volume = volume * 0.8;
     });
     
-    // Define volume inicial
+    // Volume inicial
     const initialVolume = 0.3;
     if (correctSound) correctSound.volume = initialVolume;
     if (wrongSound) wrongSound.volume = initialVolume;
     if (helloKittySound) helloKittySound.volume = initialVolume;
     if (supernaturalSound) supernaturalSound.volume = initialVolume;
-    if (harryPotterSound) harryPotterSound.volume = initialVolume * 2.5; // Volume mais alto para Harry Potter
+    if (harryPotterSound) harryPotterSound.volume = initialVolume * 2.5;
     if (heartbeatSound) heartbeatSound.volume = initialVolume * 0.5;
     if (echoSound) echoSound.volume = initialVolume * 0.7;
     if (magicSound) magicSound.volume = initialVolume * 0.8;
@@ -98,12 +202,14 @@ const photoLegends = [
 function toggleGallery() {
     const gallery = document.getElementById('photo-gallery');
     const gameBox = document.getElementById('game-box');
+    const responsesHistory = document.getElementById('responses-history');
     
     if (!gallery || !gameBox) return;
     
     if (gallery.style.display === 'none' || !gallery.style.display) {
         gallery.style.display = 'block';
         gameBox.style.display = 'none';
+        responsesHistory.style.display = 'none';
         updatePhotoCaption();
     } else {
         gallery.style.display = 'none';
@@ -144,6 +250,111 @@ function prevPhoto() {
     currentPhotoIndex = (currentPhotoIndex - 1 + photos.length) % photos.length;
     photos[currentPhotoIndex].classList.add('active');
     updatePhotoCaption();
+}
+
+// Função para mostrar/esconder histórico COMPLETO de respostas
+function showResponses() {
+    const responsesHistory = document.getElementById('responses-history');
+    const gameBox = document.getElementById('game-box');
+    const gallery = document.getElementById('photo-gallery');
+    
+    if (!responsesHistory || !gameBox) return;
+    
+    responsesHistory.style.display = 'block';
+    gameBox.style.display = 'none';
+    gallery.style.display = 'none';
+    
+    updateResponsesList();
+}
+
+function hideResponses() {
+    const responsesHistory = document.getElementById('responses-history');
+    const gameBox = document.getElementById('game-box');
+    
+    if (!responsesHistory || !gameBox) return;
+    
+    responsesHistory.style.display = 'none';
+    gameBox.style.display = 'block';
+}
+
+function updateResponsesList() {
+    const responsesList = document.getElementById('responses-list');
+    const scoreSummary = document.getElementById('score-summary');
+    
+    if (!responsesList || !scoreSummary) return;
+    
+    if (userResponses.length === 0) {
+        responsesList.innerHTML = '<p style="text-align: center; color: #666;">Ainda não há respostas para mostrar 💕</p>';
+        scoreSummary.innerHTML = '';
+        return;
+    }
+    
+    // Calcular estatísticas
+    const multipleChoiceResponses = userResponses.filter(r => r.type === 'multiple');
+    const textResponses = userResponses.filter(r => r.type === 'text');
+    const correctAnswers = multipleChoiceResponses.filter(r => r.isCorrect).length;
+    const totalMultiple = multipleChoiceResponses.length;
+    
+    // Mostrar resumo da pontuação
+    if (totalMultiple > 0) {
+        scoreSummary.innerHTML = `
+            <h4>📊 Resumo da Performance</h4>
+            <p>✅ Acertos: ${correctAnswers}/${totalMultiple} perguntas de múltipla escolha</p>
+            <p>💬 Respostas escritas: ${textResponses.length}</p>
+            <p>📝 Total de respostas: ${userResponses.length}</p>
+            <p>🎯 Taxa de acerto: ${totalMultiple > 0 ? Math.round((correctAnswers/totalMultiple)*100) : 0}%</p>
+        `;
+    } else {
+        scoreSummary.innerHTML = `
+            <h4>📊 Resumo</h4>
+            <p>💬 Respostas escritas: ${textResponses.length}</p>
+            <p>📝 Total de respostas: ${userResponses.length}</p>
+        `;
+    }
+    
+    // Listar todas as respostas
+    let html = '';
+    userResponses.forEach((response, index) => {
+        const themeEmoji = ['🎀', '👻', '⚡'][response.theme];
+        const questionNumber = response.questionNumber;
+        
+        html += `
+            <div class="response-display">
+                <h4>
+                    <span class="question-number">${questionNumber}</span>
+                    ${themeEmoji} ${response.question}
+                </h4>
+        `;
+        
+        if (response.type === 'text') {
+            html += `
+                <div class="response-text">
+                    "${response.answer}"
+                </div>
+            `;
+        } else if (response.type === 'multiple') {
+            const choiceClass = response.isCorrect ? 'correct-choice' : 'wrong-choice';
+            const resultClass = response.isCorrect ? 'correct' : 'wrong';
+            const resultText = response.isCorrect ? 'ACERTOU! ✅' : 'ERROU ❌';
+            
+            html += `
+                <div class="multiple-choice-response ${choiceClass}">
+                    <span>Ela escolheu: "<strong>${response.answer}</strong>"</span>
+                    <span class="choice-result ${resultClass}">${resultText}</span>
+                </div>
+                <small style="color: #888;">Resposta correta era: "${response.correctAnswer}"</small>
+            `;
+        }
+        
+        html += `
+                <small style="color: #888; display: block; margin-top: 5px;">
+                    Tema ${['Hello Kitty', 'Supernatural', 'Harry Potter'][response.theme]} • ${response.timestamp}
+                </small>
+            </div>
+        `;
+    });
+    
+    responsesList.innerHTML = html;
 }
 
 // Partículas flutuantes baseadas no tema
@@ -191,13 +402,8 @@ document.addEventListener('mousemove', (e) => {
     mouseY = e.clientY;
     
     // Efeitos diferentes para cada tema
-    switch(currentTheme) {
-        case 0: // Hello Kitty - Sparkles
-            if (Math.random() < 0.3) {
-                createSparkle(mouseX, mouseY);
-            }
-            break;
-        // Supernatural e Harry Potter não têm efeitos de mouse
+    if (currentTheme === 0 && Math.random() < 0.3) {
+        createSparkle(mouseX, mouseY);
     }
 });
 
@@ -229,15 +435,20 @@ function showIntro() {
         <div class="fade-in">
             <h1>${themeEmojis[currentTheme]} ${themeNames[currentTheme]} ${themeEmojis[currentTheme]}</h1>
             <p>Hoje é um dia muito especial, e você vai descobrir por quê!</p>
+            <p><small>📝 ${questions.length} perguntas te esperam...</small></p>
             <button onclick="startGame()">Começar</button>
             <button onclick="toggleGallery()">📸 Ver Fotos</button>
+            ${userResponses.length > 0 ? '<button onclick="showResponses()">💌 Ver Todas as Respostas</button>' : ''}
         </div>
+        <button onclick="showConfessionMode()">💌 Modo Confissão</button>
     `;
 }
 
 function startGame() {
     currentStep = 0;
     score = 0;
+    userResponses = []; // Reset das respostas
+    totalQuestions = questions.length;
     showQuestion();
 }
 
@@ -245,12 +456,90 @@ function showQuestion() {
     if (!gameBox) return;
     
     const q = questions[currentStep];
-    let html = `<div class="slide-in"><h2>${q.question}</h2>`;
-    q.options.forEach((opt, i) => {
-        html += `<button onclick="handleAnswer(${i})">${opt}</button>`;
-    });
+    const questionNumber = currentStep + 1;
+    
+    let html = `
+        <div class="slide-in">
+            <h2>
+                <span class="question-number">${questionNumber}</span>
+                ${q.question}
+            </h2>
+            <p><small>Pergunta ${questionNumber} de ${questions.length}</small></p>
+    `;
+    
+    if (q.type === "text") {
+        html += `
+            <div class="text-input-container">
+                <textarea 
+                    class="text-input" 
+                    id="text-answer" 
+                    placeholder="${q.placeholder}"
+                    maxlength="300"
+                ></textarea>
+                <button onclick="handleTextAnswer()">💖 Enviar Resposta</button>
+            </div>
+        `;
+    } else {
+        q.options.forEach((opt, i) => {
+            html += `<button onclick="handleAnswer(${i})">${opt}</button>`;
+        });
+    }
+    
     html += '</div>';
     gameBox.innerHTML = html;
+    
+    // Foco no campo de texto se for pergunta de texto
+    if (q.type === "text") {
+        setTimeout(() => {
+            const textInput = document.getElementById('text-answer');
+            if (textInput) {
+                textInput.focus();
+            }
+        }, 100);
+    }
+}
+
+function handleTextAnswer() {
+    const textInput = document.getElementById('text-answer');
+    if (!textInput) return;
+    
+    const answer = textInput.value.trim();
+    if (answer === '') {
+        alert('Por favor, escreva sua resposta! 💕');
+        return;
+    }
+    
+    // Salvar a resposta de texto
+    userResponses.push({
+        questionNumber: currentStep + 1,
+        question: questions[currentStep].question,
+        answer: answer,
+        type: 'text',
+        theme: currentTheme,
+        timestamp: new Date().toLocaleString()
+    });
+    
+    // Efeito visual
+    const button = document.querySelector('#game-box button');
+    if (button) {
+        button.classList.add('correct-answer');
+    }
+    
+    if (correctSound) {
+        correctSound.currentTime = 0;
+        correctSound.play().catch(() => {});
+    }
+    
+    const responses = [
+        `Hello Kitty adorou sua resposta! 💖`,
+        `Dean e Sam aprovaram essa resposta! 👻`,
+        `Resposta digna de Hogwarts! ⚡`
+    ];
+    
+    setTimeout(() => {
+        alert(`✨ ${responses[currentTheme]}`);
+        proceedToNext();
+    }, 800);
 }
 
 function handleAnswer(selected) {
@@ -258,7 +547,21 @@ function handleAnswer(selected) {
     if (buttons.length === 0) return;
     
     const selectedButton = buttons[selected];
-    const correct = questions[currentStep].correct;
+    const q = questions[currentStep];
+    const correct = q.correct;
+    const isCorrect = selected === correct;
+    
+    // Salvar a resposta de múltipla escolha
+    userResponses.push({
+        questionNumber: currentStep + 1,
+        question: q.question,
+        answer: q.options[selected],
+        correctAnswer: q.options[correct],
+        type: 'multiple',
+        isCorrect: isCorrect,
+        theme: currentTheme,
+        timestamp: new Date().toLocaleString()
+    });
     
     const acertos = [
         "A Hello Kitty ficou orgulhosa! 💖",
@@ -272,7 +575,7 @@ function handleAnswer(selected) {
         "Você beberia a poção errada em Hogwarts..."
     ];
 
-    if (selected === correct) {
+    if (isCorrect) {
         score++;
         selectedButton.classList.add('correct-answer');
         if (correctSound) {
@@ -296,7 +599,7 @@ function handleAnswer(selected) {
         const msg = erros[currentTheme];
         
         setTimeout(() => {
-            alert(`❌ ${msg}`);
+            alert(`❌ ${msg}\nResposta correta: ${q.options[correct]}`);
             proceedToNext();
         }, 800);
     }
@@ -356,13 +659,68 @@ function showFinal() {
     gameBox.innerHTML = `
         <div class="slide-in">
             <h1 class="heartbeat">💍 Você aceita namorar comigo? 💍</h1>
+            <div class="text-input-container">
+                <textarea 
+                    class="text-input" 
+                    id="final-answer" 
+                    placeholder="Escreva sua resposta do coração..."
+                    maxlength="500"
+                ></textarea>
+                <button class="heartbeat" onclick="answerFinal()">💖 Responder</button>
+            </div>
             <button class="heartbeat" onclick="answerYes()">Sim, claro! 💖</button>
             <button class="heartbeat" onclick="answerYes()">Mil vezes sim! 😍</button>
         </div>
     `;
+    
+    setTimeout(() => {
+        const finalInput = document.getElementById('final-answer');
+        if (finalInput) {
+            finalInput.focus();
+        }
+    }, 100);
+}
+
+function answerFinal() {
+    const finalInput = document.getElementById('final-answer');
+    if (!finalInput) return;
+    
+    const answer = finalInput.value.trim();
+    if (answer === '') {
+        alert('Por favor, escreva sua resposta do coração! 💕');
+        return;
+    }
+    
+    // Salvar a resposta final
+    userResponses.push({
+        questionNumber: questions.length + 1,
+        question: "💍 Você aceita namorar comigo?",
+        answer: answer,
+        type: 'text',
+        theme: currentTheme,
+        timestamp: new Date().toLocaleString(),
+        isFinal: true
+    });
+    
+    proceedToFinalResponse();
 }
 
 function answerYes() {
+    // Resposta rápida
+    userResponses.push({
+        questionNumber: questions.length + 1,
+        question: "💍 Você aceita namorar comigo?",
+        answer: "Sim! 💖",
+        type: 'text',
+        theme: currentTheme,
+        timestamp: new Date().toLocaleString(),
+        isFinal: true
+    });
+    
+    proceedToFinalResponse();
+}
+
+function proceedToFinalResponse() {
     if (!gameBox) return;
     
     // Para o heartbeat
@@ -399,85 +757,70 @@ function answerYes() {
             <p><strong>${aleatoria}</strong></p>
             <button onclick="showIntro()">🎮 Jogar Novamente</button>
             <button onclick="toggleGallery()">📸 Ver Nossas Fotos</button>
+            <button onclick="showResponses()">📋 Ver TODAS as Respostas</button>
         </div>
     `;
 
     // Confetti effect
-    if (typeof confetti !== 'undefined') {
-        confetti({
-            particleCount: 150,
-            spread: 70,
-            origin: { y: 0.6 }
-        });
-        
+    createConfetti();
+}
+
+function createConfetti() {
+    // Simula efeito de confete
+    for (let i = 0; i < 100; i++) {
         setTimeout(() => {
-            confetti({
-                particleCount: 100,
-                spread: 60,
-                origin: { y: 0.7 }
-            });
-        }, 1000);
+            const confetti = document.createElement('div');
+            confetti.style.position = 'fixed';
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.top = '-10px';
+            confetti.style.fontSize = '20px';
+            confetti.style.zIndex = '1000';
+            confetti.style.pointerEvents = 'none';
+            
+            const symbols = ['🎉', '💖', '✨', '🌸', '💕', '🎊'];
+            confetti.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+            
+            confetti.style.animation = 'floatUp 4s linear forwards';
+            
+            document.body.appendChild(confetti);
+            
+            setTimeout(() => {
+                if (confetti.parentNode) {
+                    confetti.remove();
+                }
+            }, 4000);
+        }, i * 50);
     }
 }
 
 // Função para parar todos os áudios
 function stopAllAudios() {
-    if (correctSound) {
-        correctSound.pause();
-        correctSound.currentTime = 0;
-    }
-    if (wrongSound) {
-        wrongSound.pause();
-        wrongSound.currentTime = 0;
-    }
-    if (helloKittySound) {
-        helloKittySound.pause();
-        helloKittySound.currentTime = 0;
-    }
-    if (supernaturalSound) {
-        supernaturalSound.pause();
-        supernaturalSound.currentTime = 0;
-    }
-    if (harryPotterSound) {
-        harryPotterSound.pause();
-        harryPotterSound.currentTime = 0;
-    }
-    if (heartbeatSound) {
-        heartbeatSound.pause();
-        heartbeatSound.currentTime = 0;
-    }
-    if (echoSound) {
-        echoSound.pause();
-        echoSound.currentTime = 0;
-    }
-    if (magicSound) {
-        magicSound.pause();
-        magicSound.currentTime = 0;
-    }
+    [correctSound, wrongSound, helloKittySound, supernaturalSound, 
+     harryPotterSound, heartbeatSound, echoSound, magicSound].forEach(audio => {
+        if (audio) {
+            audio.pause();
+            audio.currentTime = 0;
+        }
+    });
 }
 
-// CORRIGIDO: Função para alternar entre os três temas
+// Função para alternar entre os três temas
 function toggleTheme() {
     const themeBtn = document.getElementById("toggle-theme");
     const decorationLeft = document.getElementById('decoration-left');
     const decorationRight = document.getElementById('decoration-right');
     
-    // Verifica se os elementos existem antes de tentar modificá-los
     if (!themeBtn) {
         console.warn('Elemento toggle-theme não encontrado');
         return;
     }
     
-    // Para todos os sons antes de trocar
     stopAllAudios();
     
-    // Remove todas as classes de tema do body
     document.body.classList.remove('tema-supernatural', 'tema-harry-potter', 'tema-hello-kitty');
     
-    // Avança para o próximo tema
     currentTheme = (currentTheme + 1) % 3;
     
-    // Aplica o novo tema
     switch(currentTheme) {
         case 0: // Hello Kitty
             document.body.classList.add('tema-hello-kitty');
@@ -538,18 +881,15 @@ function toggleTheme() {
             break;
     }
     
-    // Atualiza a tela inicial
     showIntro();
 }
 
 // Event listeners
 document.addEventListener("DOMContentLoaded", () => {
-    // Aguarda um pouco para garantir que todos os elementos foram carregados
     setTimeout(() => {
         updateDaysCounter();
         setupVolumeControl();
         
-        // Inicializar com tema Hello Kitty (currentTheme = 0)
         const decorationLeft = document.getElementById('decoration-left');
         const decorationRight = document.getElementById('decoration-right');
         
@@ -566,7 +906,6 @@ document.addEventListener("DOMContentLoaded", () => {
             themeBtn.addEventListener("click", toggleTheme);
         }
         
-        // Iniciar o jogo
         showIntro();
     }, 100);
 });
@@ -579,12 +918,65 @@ setInterval(() => {
     }
 }, 4000);
 
-// Carregar confetti
-const script = document.createElement('script');
-script.src = 'https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.5.1/confetti.browser.min.js';
-document.head.appendChild(script);
+// Enter para enviar respostas de texto
+document.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && e.ctrlKey) {
+        const textAnswer = document.getElementById('text-answer');
+        const finalAnswer = document.getElementById('final-answer');
+        
+        if (textAnswer && textAnswer === document.activeElement) {
+            handleTextAnswer();
+        } else if (finalAnswer && finalAnswer === document.activeElement) {
+            answerFinal();
+        }
+    }
+});
+
+function showConfessionMode() {
+    if (!gameBox) return;
+
+    gameBox.innerHTML = `
+        <div class="slide-in">
+            <h2>💌 Modo Confissão</h2>
+            <p>Tem algo que você nunca me contou, mas quer me dizer agora?</p>
+            <div class="text-input-container">
+                <textarea 
+                    class="text-input" 
+                    id="confession-input" 
+                    placeholder="Escreva aqui com carinho..."
+                    maxlength="500"
+                ></textarea>
+                <button onclick="submitConfession()">Enviar Confissão 💖</button>
+                <button onclick="showIntro()">Voltar ao Início</button>
+            </div>
+        </div>
+    `;
+}
+
+function submitConfession() {
+    const input = document.getElementById('confession-input');
+    if (!input || input.value.trim() === "") {
+        alert("Escreva algo para enviar a confissão 💌");
+        return;
+    }
+
+    userResponses.push({
+        questionNumber: "💌",
+        question: "Confissão secreta",
+        answer: input.value.trim(),
+        type: "text",
+        theme: currentTheme,
+        timestamp: new Date().toLocaleString(),
+        isConfession: true
+    });
+
+    alert("💖 Sua confissão foi enviada com sucesso! Agora ele poderá ler depois com carinho.");
+    showIntro();
+}
 
 // Easter eggs no console
 console.log("⚡ Expelliarmus! Bem-vinda ao seu quiz mágico!");
 console.log("👻 Dean e Sam aprovariam esse quiz!");
 console.log("💖 Hello Kitty manda beijinhos!");
+console.log("📋 Agora você pode ver TODAS as respostas dela!");
+console.log("🎯 Total de perguntas: " + questions.length);

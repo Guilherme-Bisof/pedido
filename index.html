@@ -12,7 +12,6 @@
 <body>
     <!-- Partículas flutuantes -->
     <div class="particles" id="particles"></div>
-    
 
     <div class="main-container">
         <!-- Controles superiores -->
@@ -35,7 +34,6 @@
             <div class="photo-gallery" id="photo-gallery">
                 <h3>📸 Nossas Memórias 📸</h3>
                 <div class="photo-slider">
-                    <!-- Placeholder para fotos - substitua pelos caminhos das suas fotos -->
                     <img src="./fotos/foto1.jpg" alt="Nossa primeira foto" class="active">
                     <img src="./fotos/foto2.jpg" alt="No cinema">
                     <img src="./fotos/foto3.jpg" alt="Nosso momento especial">
@@ -48,47 +46,45 @@
                 </div>
             </div>
 
+            <!-- Histórico completo de respostas -->
+            <div class="responses-history" id="responses-history" style="display: none;">
+                <h3>💖 Todas as Respostas Dela 💖</h3>
+                <div class="score-summary" id="score-summary"></div>
+                <div id="responses-list"></div>
+                <button onclick="hideResponses()">❌ Fechar</button>
+            </div>
+
             <div id="game-box"></div>
         </div>
     </div>
 
-    <!-- Áudios (incluindo novos efeitos) -->
-    <audio id="correct-sound">
+    <!-- Áudios -->
+    <audio id="correct-sound" preload="auto">
         <source src="./sounds/acerto.mp3" type="audio/mpeg">
     </audio>
-
-    <audio id="wrong-sound">
+    <audio id="wrong-sound" preload="auto">
         <source src="./sounds/erro.mp3" type="audio/mpeg">
     </audio>
-
-    <audio id="hello-kitty-sound">
+    <audio id="hello-kitty-sound" preload="auto">
         <source src="./sounds/hello_kitty.mp3" type="audio/mpeg">
     </audio>
-
-    <audio id="supernatural-sound">
+    <audio id="supernatural-sound" preload="auto">
         <source src="./sounds/supernatural.mp3" type="audio/mpeg">
     </audio>
-
-    <audio id="harry-potter-sound">
+    <audio id="harry-potter-sound" preload="auto">
         <source src="./sounds/harry_potter.mp3" type="audio/mpeg">
-    </audio> 
-
-    <!-- Novos áudios -->
-    <audio id="heartbeat-sound">
+    </audio>
+    <audio id="heartbeat-sound" preload="auto">
         <source src="./sounds/heartbeat.mp3" type="audio/mpeg">
     </audio>
-
-    <audio id="echo-sound">
+    <audio id="echo-sound" preload="auto">
         <source src="./sounds/echo.mp3" type="audio/mpeg">
     </audio>
-    
-    <audio id="magic-sound">
+    <audio id="magic-sound" preload="auto">
         <source src="./sounds/magic.mp3" type="audio/mpeg">
     </audio>
 
-
-
-    <!-- Imagens decorativas (agora vazias, serão preenchidas via CSS) -->
+    <!-- Imagens decorativas -->
     <div class="hello-img top-left" id="decoration-left"></div>
     <div class="hello-img bottom-right" id="decoration-right"></div>
 

@@ -199,6 +199,125 @@ button:active {
     transform: scale(0.98);
 }
 
+/* Perguntas de texto */
+.text-input-container {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.text-input {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #ff80ab;
+    border-radius: 10px;
+    font-size: 16px;
+    font-family: inherit;
+    box-sizing: border-box;
+    margin: 10px 0;
+    background: #fff;
+    resize: vertical;
+    min-height: 80px;
+}
+
+.text-input:focus {
+    outline: none;
+    border-color: #ec407a;
+    box-shadow: 0 0 10px rgba(255, 128, 171, 0.3);
+}
+
+/* Exibição de respostas */
+.response-display {
+    background: linear-gradient(135deg, #ffe6f0, #fff0f5);
+    border: 2px solid #ff80ab;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 15px 0;
+    animation: slideIn 0.5s ease;
+}
+
+.response-display h4 {
+    color: #ec407a;
+    margin: 0 0 10px 0;
+    font-size: 14px;
+}
+
+.response-text {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    border-left: 4px solid #ff80ab;
+    font-style: italic;
+    color: #555;
+    margin: 10px 0;
+    font-size: 14px;
+}
+
+.multiple-choice-response {
+    background: white;
+    padding: 12px 15px;
+    border-radius: 10px;
+    margin: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+
+.correct-choice {
+    border-left: 4px solid #4caf50;
+    background: #f1f8e9;
+}
+
+.wrong-choice {
+    border-left: 4px solid #f44336;
+    background: #ffebee;
+}
+
+.choice-result {
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.choice-result.correct {
+    color: #4caf50;
+}
+
+.choice-result.wrong {
+    color: #f44336;
+}
+
+.responses-history {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.score-summary {
+    background: linear-gradient(45deg, #ff80ab, #ec407a);
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.question-number {
+    background: #ff80ab;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 50%;
+    font-size: 12px;
+    margin-right: 10px;
+    display: inline-block;
+    min-width: 20px;
+    text-align: center;
+}
+
 /* Animação de clique */
 button::before {
     content: '';
@@ -218,7 +337,7 @@ button:active::before {
     height: 300px;
 }
 
-/* MODIFICAÇÃO: Imagens decorativas usando background-image */
+/* Decorações */
 .hello-img {
     position: absolute;
     width: 80px;
@@ -245,7 +364,6 @@ button:active::before {
     animation-delay: 1.5s;
 }
 
-/* Classes específicas para cada tema */
 .hello-kitty-decoration {
     background-image: url('./img/hello_kitty.png');
 }
@@ -325,10 +443,8 @@ button:active::before {
 .tema-supernatural {
     background: linear-gradient(to bottom, #0d0d0d, #1c1c1c);
     color: #f1f1f1;
-    cursor: url('./img/varinha_cursor.png') 16 16, auto;
 }
 
-/* Névoa de fundo para tema Supernatural */
 .tema-supernatural::before {
     content: '';
     position: fixed;
@@ -368,6 +484,16 @@ button:active::before {
     box-shadow: 0 5px 15px rgba(102, 102, 102, 0.3);
 }
 
+.tema-supernatural .text-input {
+    background-color: #2a2a2a;
+    color: #f1f1f1;
+    border-color: #666;
+}
+
+.tema-supernatural .text-input:focus {
+    border-color: #888;
+}
+
 .tema-supernatural #toggle-theme,
 .tema-supernatural .photo-btn {
     background-color: #444;
@@ -388,15 +514,23 @@ button:active::before {
     color: #f1f1f1;
 }
 
+.tema-supernatural .response-display {
+    background: linear-gradient(135deg, #2a2a2a, #333);
+    border-color: #666;
+}
+
+.tema-supernatural .response-text,
+.tema-supernatural .multiple-choice-response {
+    background: #1a1a1a;
+    color: #f1f1f1;
+}
+
 /* Tema Harry Potter */
 .tema-harry-potter {
     background: linear-gradient(135deg, #1a0d2e 0%, #16213e 50%, #0f3460 100%);
     color: #f0e6d2;
-    cursor: url('./img/varinha_cursor.png') 16 16, auto;
-    position: relative;
 }
 
-/* Efeito de estrelas cintilantes */
 .tema-harry-potter::before {
     content: '';
     position: fixed;
@@ -437,6 +571,16 @@ button:active::before {
     box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
 }
 
+.tema-harry-potter .text-input {
+    background: linear-gradient(145deg, #2d1b47, #1e1a3a);
+    color: #f0e6d2;
+    border-color: #d4af37;
+}
+
+.tema-harry-potter .text-input:focus {
+    border-color: #ffd700;
+}
+
 .tema-harry-potter #toggle-theme,
 .tema-harry-potter .photo-btn {
     background: linear-gradient(45deg, #8b0000, #b22222);
@@ -460,6 +604,17 @@ button:active::before {
     border: 1px solid #d4af37;
 }
 
+.tema-harry-potter .response-display {
+    background: linear-gradient(135deg, #2d1b47, #1e1a3a);
+    border-color: #d4af37;
+}
+
+.tema-harry-potter .response-text,
+.tema-harry-potter .multiple-choice-response {
+    background: linear-gradient(145deg, #1a0d2e, #16213e);
+    color: #f0e6d2;
+}
+
 /* Feedback visual para respostas */
 .correct-answer {
     animation: correctPulse 0.6s ease;
@@ -481,7 +636,7 @@ button:active::before {
     75% { transform: translateX(5px); }
 }
 
-/* Sparkles seguindo o mouse (tema Hello Kitty) */
+/* Sparkles seguindo o mouse */
 .sparkle {
     position: fixed;
     pointer-events: none;
@@ -505,7 +660,7 @@ button:active::before {
     }
 }
 
-/* Efeito de heartbeat para botões especiais */
+/* Efeito de heartbeat */
 .heartbeat {
     animation: heartbeat 1.5s infinite;
 }
@@ -537,7 +692,7 @@ button:active::before {
     opacity: 1;
 }
 
-/* Estilos gerais para dispositivos móveis */
+/* Responsividade */
 @media (max-width: 600px) {
     body {
         font-size: 14px;
@@ -563,39 +718,20 @@ button:active::before {
         justify-content: space-between;
     }
 
-    .days-counter {
-        font-size: 16px;
+    .text-input {
+        font-size: 14px;
     }
 
-    .photo-slider img {
-        height: 150px;
+    .response-display {
+        padding: 15px;
     }
 
-    .photo-gallery {
-        margin: 10px 0;
+    .responses-history {
+        max-height: 400px;
     }
 
     button {
         font-size: 14px;
         padding: 10px;
-    }
-
-    h1, h2, p {
-        font-size: 16px;
-    }
-}
-
-/* Estilos para tablets */
-@media (min-width: 601px) and (max-width: 900px) {
-    body {
-        font-size: 16px;
-    }
-
-    .main-container {
-        width: 90%;
-    }
-
-    button {
-        font-size: 16px;
     }
 }
